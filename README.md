@@ -130,6 +130,5 @@ python src/evaluate.py --weights results/best_model.h5
 
 ```
 
-### Next Step
-Would you like me to generate the `requirements.txt` file to ensure the `pip install` command works immediately?
+
 ```
