@@ -1,8 +1,11 @@
-# Reproduction Guide
+
+
+````markdown
+# Reproduction Guide - MSML641test
 
 ## Repository Structure
 
-
+```text
 MSML641test/
 ├── data/                     # auto-created; IMDb is downloaded here
 ├── results/
@@ -15,67 +18,118 @@ MSML641test/
     ├── train.py              # single run + full experiment suite
     ├── evaluate.py           # metrics, reports, plots
     └── utils.py              # timers, plotting helpers, dirs, seeding
+````
 
-#LOCAL SETUP
+## Local Setup
 
-git clone https://github.com/tusu18/MSML641test.git
+```bash
+git clone [https://github.com/tusu18/MSML641test.git](https://github.com/tusu18/MSML641test.git)
 cd MSML641test
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
+```
 
-# Preprocess (downloads IMDb and creates padded sequences)
+## Usage
+
+### 1\. Preprocess Data
+
+Downloads the IMDb 50k dataset, cleans text (lowercase, strip punctuation), tokenizes via NLTK (top 10k tokens), and creates padded sequences.
+
+```bash
 python src/preprocess.py --data_dir data --vocab_size 10000
+```
 
-# Single run
-python src/train.py --model lstm --activation tanh --optimizer rmsprop --seq-length 100
+### 2\. Run Experiments
 
-# Full sweep
-python src/train.py --full-experiment
+#### Single Model Run
 
-#SINGLE MODEL RUN
+Run a specific configuration using the flags below.
 
+**Syntax:**
+
+```bash
 python src/train.py \
   --model {rnn,lstm,gru} \
   --activation {sigmoid,relu,tanh} \
   --optimizer {adam,sgd,rmsprop} \
   --seq-length {25,50,100} \
   [--grad-clip] [--bidirectional]
+```
 
-#EXAMPLE
-# BiLSTM (bidirectional) with Adam, 50 tokens, gradient clipping on
+**Examples:**
+
+*BiLSTM (bidirectional) with Adam, 50 tokens, gradient clipping on:*
+
+```bash
 python src/train.py --model lstm --activation tanh --optimizer adam --seq-length 50 --grad-clip --bidirectional
+```
 
-# Vanilla RNN with ReLU + Adam, 100 tokens
+*Vanilla RNN with ReLU + Adam, 100 tokens:*
+
+```bash
 python src/train.py --model rnn --activation relu --optimizer adam --seq-length 100
+```
 
-#FULL EXPERIMENT
+#### Full Experiment Sweep
+
+Run the full suite over all architectures, activations, optimizers, and sequence lengths:
+
+```bash
 python src/train.py --full-experiment
+```
 
-What the scripts do
+## Script Descriptions
 
-src/preprocess.py
-	•	Downloads IMDb 50k, cleans (lowercase, strip punctuation), tokenizes (NLTK), keeps top 10k tokens.
-	•	Pads or truncates sequences to 25/50/100 (length is set later during training).
-	•	Saves vocab and intermediate artifacts for fast restarts.
+### `src/preprocess.py`
 
-src/models.py
-	•	create_rnn_model(...) builds RNN/LSTM/BiLSTM with:
-	•	Embedding 100, 2 recurrent layers, hidden size 64, dropout ≈ 0.4
-	•	Binary output (sigmoid)
+  * Downloads IMDb 50k, cleans text, and tokenizes (NLTK).
+  * Keeps the top 10k tokens.
+  * Pads or truncates sequences to 25/50/100 (length set later during training).
+  * Saves vocab and intermediate artifacts for fast restarts.
 
-src/train.py
-	•	Single run with the flags above.
-	•	Full sweep (--full-experiment) over architectures, activations, optimizers, lengths, clipping.
-	•	Tracks time per epoch, early stopping, best checkpoint by validation metric.
+### `src/models.py`
 
-src/evaluate.py
-	•	Computes test‐set metrics (Accuracy, Macro-F1, Precision/Recall), confusion matrix.
-	•	Generates:
-	•	Model comparison by F1 bar plot
-	•	Accuracy vs Sequence Length line plot
-	•	Per-run training history plots (accuracy/loss vs epoch)
+  * `create_rnn_model(...)` builds RNN/LSTM/BiLSTM architectures.
+  * **Architecture:** Embedding 100, 2 recurrent layers, hidden size 64, dropout ≈ 0.4.
+  * **Output:** Binary classification (sigmoid).
 
-  Re-using Saved Models
-	•	Best from sweep: results/best_model.h5 (auto-saved when --full-experiment finds a new best F1).
-	•	Evaluate a saved model on the test set:
-  python src/evaluate.py --weights results/best_model.h5
+### `src/train.py`
+
+  * Executes single runs based on CLI flags.
+  * Executes `--full-experiment` sweep.
+  * Tracks time per epoch, early stopping, and saves the best checkpoint by validation metric.
+
+### `src/evaluate.py`
+
+  * Computes test-set metrics (Accuracy, Macro-F1, Precision/Recall) and confusion matrix.
+  * **Generates:**
+      * Model comparison by F1 bar plot.
+      * Accuracy vs Sequence Length line plot.
+      * Per-run training history plots (accuracy/loss vs epoch).
+
+## Results & Re-using Models
+
+### Outputs
+
+  * **`results/metrics.csv`**: All experiment results.
+  * **`results/best_model.h5`**: Best checkpoint by F1 (auto-saved during sweep).
+  * **`results/plots/`**: Comparison plots + per-run histories.
+
+### Loading Saved Models
+
+Evaluate the best model on the test set:
+
+```bash
+python src/evaluate.py --weights results/best_model.h5
+```
+
+```
+
+### Next Step
+Would you like me to generate the `requirements.txt` file to ensure the `pip install` command works immediately?
+```
