@@ -1,19 +1,20 @@
-# Reproduce
+# Reproduction Guide
 
-#REPO
+## Repository Structure
+
 
 MSML641test/
-├── data/                         # auto-created; IMDb is downloaded here
+├── data/                     # auto-created; IMDb is downloaded here
 ├── results/
-│   ├── metrics.csv               # all experiment results (created after training)
-│   ├── best_model.h5             # best checkpoint by F1 (if full sweep)
-│   └── plots/                    # comparison plots + per-run histories
+│   ├── metrics.csv           # all experiment results (created after training)
+│   ├── best_model.h5         # best checkpoint by F1 (if full sweep)
+│   └── plots/                # comparison plots + per-run histories
 └── src/
-    ├── preprocess.py             # download + clean + tokenize + pad
-    ├── models.py                 # RNN/LSTM/BiLSTM builders
-    ├── train.py                  # single run + full experiment suite
-    ├── evaluate.py               # metrics, reports, plots
-    └── utils.py                  # timers, plotting helpers, dirs, seeding
+    ├── preprocess.py         # download + clean + tokenize + pad
+    ├── models.py             # RNN/LSTM/BiLSTM builders
+    ├── train.py              # single run + full experiment suite
+    ├── evaluate.py           # metrics, reports, plots
+    └── utils.py              # timers, plotting helpers, dirs, seeding
 
 #LOCAL SETUP
 
